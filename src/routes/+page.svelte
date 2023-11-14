@@ -23,15 +23,19 @@
 	};
 	const submit = async () => {
 		const id = Date.now().toString();
-		const pricing = await (await fetch('https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=USD')).json(); 
+		const pricing = await (
+			await fetch('https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=USD')
+		).json();
 		const monval = Number.parseFloat(value) / Number.parseFloat(pricing.USD);
-		description =  description.trim().length < 1 ? 'no description' : description;
+		description = description.trim().length < 1 ? 'no description' : description;
 		$transactionStack.push({
 			id: id,
 			description: description,
 			fiatValue: value,
-			moneroValue: ''+monval,
-			uri: encodeURI('monero:'+$walletAddress+'?tx_amount='+monval+'&tx_description='+description+'')
+			moneroValue: '' + monval,
+			uri: encodeURI(
+				'monero:' + $walletAddress + '?tx_amount=' + monval + '&tx_description=' + description + ''
+			)
 		});
 		goto('checkout/' + id);
 	};
@@ -85,7 +89,7 @@
 					border-width: 1px; 
 					flex-grow: 1;"
 				/>
-				<caption
+				<div
 					class="even-spaced-text"
 					style="width: max-content;
 						border: solid;
@@ -97,7 +101,7 @@
 						margin-top: 0px;"
 				>
 					Description (optional)
-				</caption>
+				</div>
 				<div
 					style="border-bottom: solid;
 					border-width: 1px; 
@@ -123,7 +127,7 @@
 					border-width: 1px; 
 					flex-grow: 1;"
 				/>
-				<caption
+				<div
 					class="even-spaced-text"
 					style="width: max-content;
 						border: solid;
@@ -135,7 +139,7 @@
 						margin-top: 0px;"
 				>
 					*included on receipt
-				</caption>
+				</div>
 				<div
 					style="border-top: solid;
 					border-width: 1px; 
