@@ -10,9 +10,13 @@
 	 * @type HTMLCanvasElement
 	 */
 	let canvas;
+    /**
+     * @type string
+     */
+    export let uri; 
 
 	onMount(() => {
-		toCanvas(canvas, 'www.google.com', { errorCorrectionLevel: 'H' }, function (/** @type {any} */ err) {
+		toCanvas(canvas, uri, { errorCorrectionLevel: 'H' }, function (/** @type {any} */ err) {
 			if (err) throw err;
 		});
 	});

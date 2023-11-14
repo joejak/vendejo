@@ -1,7 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { walletAddress } from '$lib/store';
-	import { createEventDispatcher } from 'svelte';
+	import { transactionStack, walletAddress } from '$lib/store';
 
 	export let value /**@type {string}*/ = '';
 	export let description /**@type {string}*/ = '';
@@ -13,27 +12,33 @@
 		}
 	};
 
-	const dispatch = createEventDispatcher();
-
 	const select = (/** @type {string} */ num) => () => {
 		if (value.includes('.') && num == '.') {
 			return;
 		}
 		value += num;
-		dispatch('pin', num);
 	};
 	const clear = () => {
 		value = '';
-		dispatch('clear', value);
 	};
-	const submit = () => {
-		goto('checkout');
+	const submit = async () => {
+		const id = Date.now().toString();
+		const pricing = await (await fetch('https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=USD')).json(); 
+		const monval = Number.parseFloat(value) / Number.parseFloat(pricing.USD);
+		description =  description.trim().length < 1 ? 'no description' : description;
+		$transactionStack.push({
+			id: id,
+			description: description,
+			fiatValue: value,
+			moneroValue: ''+monval,
+			uri: encodeURI('monero:'+$walletAddress+'?tx_amount='+monval+'&tx_description='+description+'')
+		});
+		goto('checkout/' + id);
 	};
 </script>
 
 <div class="main">
-	<h1 class="even-spaced-text">Welcome to Vendejo</h1>
-	<h2>{$walletAddress}</h2>
+	<h1 class="even-spaced-text">Vendejo</h1>
 
 	<div class="main-content">
 		<div class="main-content-panel">
@@ -161,7 +166,7 @@
 
 	@media only screen and (width >= 768px) {
 		.main-content {
-			width: 36em;
+			width: 75vw;
 			display: flex;
 			flex-direction: row;
 			column-gap: 5px;
@@ -195,6 +200,8 @@
 	}
 
 	.keypad-row > button {
+		width: 40px;
+		font-size: xx-large;
 		flex-grow: 1;
 	}
 
